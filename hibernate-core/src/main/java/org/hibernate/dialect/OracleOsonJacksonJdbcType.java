@@ -40,13 +40,21 @@ public class OracleOsonJacksonJdbcType extends OracleJsonJdbcType {
 	}
 
 	@Override
-	public String toString() { return "OracleOsonJacksonJdbcType";}
+	public String toString() {
+		return "OracleOsonJacksonJdbcType";
+	}
 
-	private <X> InputStream toOson(X value, JavaType<X> javaType, WrapperOptions options)  {
+	private <X> InputStream toOson(X value, JavaType<X> javaType, WrapperOptions options) throws SQLException {
 
+		/*
+		Since we are using setBinaryStream in the doBind function, we are creating a PipedInputStream and a PipedOutputStream
+		The generator writes to the PipedOutputStream and we return the PipedInputStream
+		 */
 		PipedInputStream in = new PipedInputStream();
 		try {
 			PipedOutputStream out = new PipedOutputStream(in);
+
+			// new thread to avoid deadlocking the main thread
 			new Thread(() -> {
 				final OsonGenerator osonGenerator ;
 				try  {
@@ -54,13 +62,15 @@ public class OracleOsonJacksonJdbcType extends OracleJsonJdbcType {
 					options.getSessionFactory().getFastSessionServices().getJsonFormatMapper().writeToTarget(value,javaType,osonGenerator,options);
 					osonGenerator.close();
 					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+				}
+				catch (IOException e) {
+					throw new IllegalArgumentException(e.getMessage());
+
 				}
 			} ).start();
 		}
-		catch(IOException ex) {
-			ex.printStackTrace();
+		catch(IOException e) {
+			throw new SQLException(e.getMessage());
 		}
 		return in;
 
