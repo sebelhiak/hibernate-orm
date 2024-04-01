@@ -25,21 +25,21 @@ public class OracleOsonJacksonHelper  {
 	 * Singleton access
 	 */
 
-	public static <X> X doExtract(ResultSet rs, int paramIndex, JavaType<X> javaType, WrapperOptions options) throws SQLException {
+	protected static <X> X doExtract(ResultSet rs, int paramIndex, JavaType<X> javaType, WrapperOptions options) throws SQLException {
 		OracleJsonDatum obj = rs.getObject( paramIndex, OracleJsonDatum.class );
 		if ( obj == null ) {
 			return null;
 		}
 		return fromOson( obj.shareBytes(), javaType, options );
 	}
-	public static <X> X doExtract(CallableStatement statement, int paramIndex, JavaType<X> javaType, WrapperOptions options) throws SQLException {
+	protected static <X> X doExtract(CallableStatement statement, int paramIndex, JavaType<X> javaType, WrapperOptions options) throws SQLException {
 		OracleJsonDatum obj = statement.getObject( paramIndex, OracleJsonDatum.class );
 		if ( obj == null ) {
 			return null;
 		}
 		return fromOson( obj.shareBytes(), javaType, options );
 	}
-	public static <X> X doExtract(CallableStatement statement, String name, JavaType<X> javaType, WrapperOptions options)
+	protected static <X> X doExtract(CallableStatement statement, String name, JavaType<X> javaType, WrapperOptions options)
 			throws SQLException {
 		OracleJsonDatum obj = statement.getObject( name, OracleJsonDatum.class );
 		if ( obj == null ) {

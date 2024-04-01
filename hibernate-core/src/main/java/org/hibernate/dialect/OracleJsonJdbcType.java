@@ -37,11 +37,11 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 	 */
 	public static final OracleJsonJdbcType INSTANCE = new OracleJsonJdbcType( null );
 
-	protected OracleJsonJdbcType(EmbeddableMappingType embeddableMappingType) {
+	private OracleJsonJdbcType(EmbeddableMappingType embeddableMappingType) {
 		super( embeddableMappingType );
 	}
 
-	protected FormatMapper getJdbcTypeFormatMapper(WrapperOptions options){
+	private FormatMapper getFormatMapper(WrapperOptions options){
 		return options.getSessionFactory().getFastSessionServices().getJsonFormatMapper();
 	}
 	@Override
@@ -68,7 +68,7 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 			@Override
 			protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
 					throws SQLException {
-				FormatMapper formatMapper = getJdbcTypeFormatMapper(options);
+				FormatMapper formatMapper = getFormatMapper( options );
 				if(formatMapper instanceof JacksonJsonFormatMapper ){
 					OracleOsonJacksonHelper.doBind( st, value, index,getJavaType(), options );
 				}
@@ -86,7 +86,7 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 			@Override
 			protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
 					throws SQLException {
-					FormatMapper formatMapper = getJdbcTypeFormatMapper(options);
+					FormatMapper formatMapper = getFormatMapper( options );
 					if(formatMapper instanceof JacksonJsonFormatMapper ){
 						OracleOsonJacksonHelper.doBind( st, value, name,getJavaType(), options );
 					}
@@ -107,7 +107,7 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 		return new BasicExtractor<>( javaType, this ) {
 			@Override
 			protected X doExtract(ResultSet rs, int paramIndex, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getJdbcTypeFormatMapper(options);
+				FormatMapper formatMapper = getFormatMapper( options );
 				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
 					return OracleOsonJacksonHelper.doExtract( rs, paramIndex,getJavaType(), options );
 				}
@@ -117,17 +117,16 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 
 			@Override
 			protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getJdbcTypeFormatMapper(options);
+				FormatMapper formatMapper = getFormatMapper( options );
 				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
 					return OracleOsonJacksonHelper.doExtract( statement, index,getJavaType(), options );
-
 				}
 				return fromString( statement.getBytes( index ), options );
 			}
 
 			@Override
 			protected X doExtract(CallableStatement statement, String name, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getJdbcTypeFormatMapper(options);
+				FormatMapper formatMapper = getFormatMapper( options );
 				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
 					return OracleOsonJacksonHelper.doExtract( statement, name,getJavaType(), options );
 				}
@@ -146,8 +145,4 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 			}
 		};
 	}
-
-
-
-
 }
