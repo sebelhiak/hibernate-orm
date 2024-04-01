@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * @author Christian Beikov
  */
-public  class JacksonJsonFormatMapper implements FormatMapper {
+public final class JacksonJsonFormatMapper implements FormatMapper {
 
 	public static final String SHORT_NAME = "jackson";
 

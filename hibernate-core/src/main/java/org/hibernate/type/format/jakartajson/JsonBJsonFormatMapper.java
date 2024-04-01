@@ -56,24 +56,4 @@ public final class JsonBJsonFormatMapper implements FormatMapper {
 			throw new IllegalArgumentException( "Could not serialize object of java type: " + javaType, e );
 		}
 	}
-
-	@Override
-	public boolean supportsSourceType(Class<?> sourceType) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsTargetType(Class<?> targetType) {
-		return false;
-	}
-
-	@Override
-	public <T> void writeToTarget(T value, JavaType<T> javaType, Object target, WrapperOptions options) {
-
-	}
-
-	@Override
-	public <T> T readFromSource(JavaType<T> javaType, Object source, WrapperOptions options) {
-		return null;
-	}
 }

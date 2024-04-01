@@ -47,20 +47,27 @@ public interface FormatMapper {
 	/**
 	 * Checks if the given sourceType is supported for conversion.
 	 */
-	boolean supportsSourceType(Class<?> sourceType);
+	default boolean supportsSourceType(Class<?> sourceType){
+		return false;
+	}
+
 	/**
 	 * Checks if the given targetType is supported for conversion.
 	 */
-	boolean supportsTargetType(Class<?> targetType);
+	default boolean supportsTargetType(Class<?> targetType){
+		return false;
+	}
 
 	/**
 	 * Writes the given value to the target using the specified JavaType and options.
 	 */
-	<T> void writeToTarget(T value, JavaType<T> javaType, Object target, WrapperOptions options);
+	default <T> void writeToTarget(T value, JavaType<T> javaType, Object target, WrapperOptions options){}
 
 	/**
 	 * Reads a value from the source using the specified JavaType and options.
 	 */
-	<T> T readFromSource(JavaType<T> javaType, Object source, WrapperOptions options);
+	default <T> T readFromSource(JavaType<T> javaType, Object source, WrapperOptions options){
+		return null;
+	}
 
 }
