@@ -79,7 +79,7 @@ public class OracleJsonBlobJdbcType implements AggregateJdbcType {
 		return embeddableMappingType;
 	}
 
-	protected <X> X fromString(String string, JavaType<X> javaType, WrapperOptions options) throws SQLException {
+	public <X> X fromString(String string, JavaType<X> javaType, WrapperOptions options) throws SQLException {
 		if ( embeddableMappingType != null ) {
 			return JsonHelper.fromString(
 					embeddableMappingType,
@@ -107,7 +107,7 @@ public class OracleJsonBlobJdbcType implements AggregateJdbcType {
 		return JsonHelper.fromString( embeddableMappingType, (String) rawJdbcValue, false, options );
 	}
 
-	protected <X> String toString(X value, JavaType<X> javaType, WrapperOptions options) {
+	public <X> String toString(X value, JavaType<X> javaType, WrapperOptions options) {
 		if ( embeddableMappingType != null ) {
 			return JsonHelper.toString( embeddableMappingType, value, options );
 		}
