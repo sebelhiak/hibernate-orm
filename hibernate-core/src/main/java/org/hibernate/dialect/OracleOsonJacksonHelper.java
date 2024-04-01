@@ -52,10 +52,7 @@ public class OracleOsonJacksonHelper  {
 			return null;
 		}
 		OsonParser osonParser = new OsonFactory().createParser( osonBytes);
-		return (options.getSessionFactory().getFastSessionServices().getJsonFormatMapper()).readFromSource(javaType,
-																										   osonParser,
-																										   options
-		);
+		return (options.getSessionFactory().getFastSessionServices().getJsonFormatMapper()).readFromSource(javaType, osonParser, options );
 	}
 	protected static <X> void doBind(CallableStatement st, X value, String name,JavaType<X> javaType, WrapperOptions options)
 			throws SQLException {
@@ -96,9 +93,5 @@ public class OracleOsonJacksonHelper  {
 			throw new SQLException(e.getMessage());
 		}
 		return in;
-
 	}
-
-
-
 }
