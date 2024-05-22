@@ -88,7 +88,7 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 
 	@Override
 	public <X> ValueExtractor<X> getExtractor(JavaType<X> javaType) {
-		return new BasicExtractor<X>( javaType, this ) {
+		return new BasicExtractor<>( javaType, this ) {
 			@Override
 			protected X doExtract(ResultSet rs, int paramIndex, WrapperOptions options) throws SQLException {
 				return rs.getObject( paramIndex, javaType.getJavaTypeClass() );
