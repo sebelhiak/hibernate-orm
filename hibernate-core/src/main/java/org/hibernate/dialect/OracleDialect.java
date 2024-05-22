@@ -945,7 +945,7 @@ public class OracleDialect extends Dialect {
 				.getSetting( PREFER_LONG_RAW, StandardConverters.BOOLEAN, false );
 		typeContributions.contributeJdbcType( preferLong ? BlobJdbcType.PRIMITIVE_ARRAY_BINDING : BlobJdbcType.DEFAULT );
 
-		if ( getVersion().isSameOrAfter( 21 ) ) {
+		if ( getVersion().isSameOrAfter( 21 )  && OracleJdbcHelper.checkDriverVersion( databaseMetaData) && OracleJdbcHelper.loadProvider( serviceRegistry,"oracle.jdbc.spi.OsonProvider" ) ) {
 			typeContributions.contributeJdbcType( OracleJsonJdbcType.INSTANCE );
 		}
 		else {

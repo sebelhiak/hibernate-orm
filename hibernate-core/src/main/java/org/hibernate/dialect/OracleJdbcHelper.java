@@ -7,7 +7,7 @@
 package org.hibernate.dialect;
 
 import java.lang.reflect.InvocationTargetException;
-
+import java.sql.DatabaseMetaData;
 import org.hibernate.HibernateError;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.hibernate.boot.registry.classloading.spi.ClassLoadingException;
@@ -42,6 +42,10 @@ public class OracleJdbcHelper {
 		return create( serviceRegistry, "org.hibernate.dialect.OracleNestedTableJdbcTypeConstructor" );
 	}
 
+	public static boolean checkDriverVersion(DatabaseMetaData databaseMetaData) {
+		return databaseMetaData.getDriverMajorVersion()>=23 && databaseMetaData.getDriverMinorVersion()>=4;
+	}
+
 	public static JdbcType getStructJdbcType(ServiceRegistry serviceRegistry) {
 		return create( serviceRegistry, "org.hibernate.dialect.OracleStructJdbcType" );
 	}
@@ -57,5 +61,17 @@ public class OracleJdbcHelper {
 		catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			throw new HibernateError( "Could not construct JdbcType", e );
 		}
+	}
+
+	public  static boolean loadProvider(ServiceRegistry serviceRegistry, String s) {
+		final ClassLoaderService classLoaderService = serviceRegistry.requireService( ClassLoaderService.class );
+		try {
+
+			return !classLoaderService.loadJavaServices(classLoaderService.classForName(s)).isEmpty();
+		}
+		catch (ClassLoadingException ex) {
+			return false;
+		}
+
 	}
 }

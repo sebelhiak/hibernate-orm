@@ -43,31 +43,4 @@ public interface FormatMapper {
 	 * Serializes the object to a string.
 	 */
 	<T> String toString(T value, JavaType<T> javaType, WrapperOptions wrapperOptions);
-
-	/**
-	 * Checks if the given sourceType is supported for conversion.
-	 */
-	default boolean supportsSourceType(Class<?> sourceType){
-		return false;
-	}
-
-	/**
-	 * Checks if the given targetType is supported for conversion.
-	 */
-	default boolean supportsTargetType(Class<?> targetType){
-		return false;
-	}
-
-	/**
-	 * Writes the given value to the target using the specified JavaType and options.
-	 */
-	default <T> void writeToTarget(T value, JavaType<T> javaType, Object target, WrapperOptions options){}
-
-	/**
-	 * Reads a value from the source using the specified JavaType and options.
-	 */
-	default <T> T readFromSource(JavaType<T> javaType, Object source, WrapperOptions options){
-		return null;
-	}
-
 }

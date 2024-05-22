@@ -6,7 +6,6 @@
  */
 package org.hibernate.dialect;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +22,9 @@ import org.hibernate.type.descriptor.jdbc.AggregateJdbcType;
 import org.hibernate.type.descriptor.jdbc.BasicBinder;
 import org.hibernate.type.descriptor.jdbc.BasicExtractor;
 import org.hibernate.type.descriptor.jdbc.OracleJsonBlobJdbcType;
-import org.hibernate.type.format.FormatMapper;
-import org.hibernate.type.format.jackson.JacksonJsonFormatMapper;
+
+import oracle.jdbc.OracleTypes;
+
 
 /**
  * Specialized type mapping for {@code JSON} and the JSON SQL data type for Oracle.
@@ -41,9 +41,8 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 		super( embeddableMappingType );
 	}
 
-	private FormatMapper getFormatMapper(WrapperOptions options){
-		return options.getSessionFactory().getFastSessionServices().getJsonFormatMapper();
-	}
+
+
 	@Override
 	public String toString() {
 		return "OracleJsonJdbcType";
@@ -58,90 +57,54 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 	}
 
 	@Override
-	public String getCheckCondition(String columnName, JavaType<?> javaType, BasicValueConverter<?, ?> converter, Dialect dialect) {
+	public String getCheckCondition(
+			String columnName,
+			JavaType<?> javaType,
+			BasicValueConverter<?, ?> converter,
+			Dialect dialect) {
 		// No check constraint necessary, because the JSON DDL type is already OSON encoded
 		return null;
 	}
+
 	@Override
 	public <X> ValueBinder<X> getBinder(JavaType<X> javaType) {
 		return new BasicBinder<>( javaType, this ) {
 			@Override
 			protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
 					throws SQLException {
-				FormatMapper formatMapper = getFormatMapper( options );
-				if(formatMapper instanceof JacksonJsonFormatMapper ){
-					OracleOsonJacksonHelper.doBind( st, value, index,getJavaType(), options );
-				}
-				else {
-					final String json = OracleJsonBlobJdbcType.INSTANCE.toString(
-							value,
-							getJavaType(),
-							options
-					);
-					st.setBytes( index, json.getBytes( StandardCharsets.UTF_8 ) );
-				}
-
+				st.setObject( index, value, OracleTypes.JSON );
 			}
 
 			@Override
 			protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
 					throws SQLException {
-					FormatMapper formatMapper = getFormatMapper( options );
-					if(formatMapper instanceof JacksonJsonFormatMapper ){
-						OracleOsonJacksonHelper.doBind( st, value, name,getJavaType(), options );
-					}
-					else {
-						final String json = OracleJsonBlobJdbcType.INSTANCE.toString(
-								value,
-								getJavaType(),
-								options
-						);
-						st.setBytes( name, json.getBytes( StandardCharsets.UTF_8 ) );
-					}
+				st.setObject( name, value, OracleTypes.JSON );
+			}
 
-				}
-		};
+
+
+	};
 	}
+
 	@Override
 	public <X> ValueExtractor<X> getExtractor(JavaType<X> javaType) {
-		return new BasicExtractor<>( javaType, this ) {
+		return new BasicExtractor<X>( javaType, this ) {
 			@Override
 			protected X doExtract(ResultSet rs, int paramIndex, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getFormatMapper( options );
-				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
-					return OracleOsonJacksonHelper.doExtract( rs, paramIndex,getJavaType(), options );
-				}
-				return fromString( rs.getBytes( paramIndex ), options );
-
+				return rs.getObject( paramIndex, javaType.getJavaTypeClass() );
 			}
 
 			@Override
-			protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getFormatMapper( options );
-				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
-					return OracleOsonJacksonHelper.doExtract( statement, index,getJavaType(), options );
-				}
-				return fromString( statement.getBytes( index ), options );
+			protected X doExtract(CallableStatement statement, int index, WrapperOptions options)
+					throws SQLException {
+				return statement.getObject( index, javaType.getJavaTypeClass() );
 			}
 
 			@Override
-			protected X doExtract(CallableStatement statement, String name, WrapperOptions options) throws SQLException {
-				FormatMapper formatMapper = getFormatMapper( options );
-				if ( formatMapper instanceof JacksonJsonFormatMapper ) {
-					return OracleOsonJacksonHelper.doExtract( statement, name,getJavaType(), options );
-				}
-				return fromString( statement.getBytes( name ), options );
-			}
+			protected X doExtract(CallableStatement statement, String name, WrapperOptions options)
+					throws SQLException {
+				return statement.getObject( name, javaType.getJavaTypeClass() );
 
-			private X fromString(byte[] json, WrapperOptions options) throws SQLException {
-				if ( json == null ) {
-					return null;
-				}
-				return OracleJsonBlobJdbcType.INSTANCE.fromString(
-						new String( json, StandardCharsets.UTF_8 ),
-						getJavaType(),
-						options
-				);
 			}
 		};
 	}
