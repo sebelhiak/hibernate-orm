@@ -7,7 +7,6 @@
 package org.hibernate.dialect;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.DatabaseMetaData;
 import org.hibernate.HibernateError;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.hibernate.boot.registry.classloading.spi.ClassLoadingException;
