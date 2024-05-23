@@ -42,10 +42,6 @@ public class OracleJdbcHelper {
 		return create( serviceRegistry, "org.hibernate.dialect.OracleNestedTableJdbcTypeConstructor" );
 	}
 
-	public static boolean checkDriverVersion(DatabaseMetaData databaseMetaData) {
-		return databaseMetaData.getDriverMajorVersion()>=23 && databaseMetaData.getDriverMinorVersion()>=4;
-	}
-
 	public static JdbcType getStructJdbcType(ServiceRegistry serviceRegistry) {
 		return create( serviceRegistry, "org.hibernate.dialect.OracleStructJdbcType" );
 	}
