@@ -13,6 +13,7 @@ import org.hibernate.boot.registry.classloading.spi.ClassLoadingException;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.descriptor.jdbc.JdbcType;
 import org.hibernate.type.descriptor.jdbc.JdbcTypeConstructor;
+import org.hibernate.type.format.jackson.JacksonIntegration;
 
 /**
  * The following class provides some convenience methods for accessing JdbcType instance,
@@ -58,15 +59,14 @@ public class OracleJdbcHelper {
 		}
 	}
 
-	public  static boolean loadProvider(ServiceRegistry serviceRegistry, String s) {
+	public  static boolean loadJacksonExtension(ServiceRegistry serviceRegistry) {
 		final ClassLoaderService classLoaderService = serviceRegistry.requireService( ClassLoaderService.class );
 		try {
-
-			return !classLoaderService.loadJavaServices(classLoaderService.classForName(s)).isEmpty();
+			classLoaderService.classForName("oracle.jdbc.jackson.oson.provider.JacksonOsonConverter");
+			return JacksonIntegration.getJsonJacksonFormatMapperOrNull() != null;
 		}
 		catch (ClassLoadingException ex) {
 			return false;
 		}
-
-	}
+  }
 }

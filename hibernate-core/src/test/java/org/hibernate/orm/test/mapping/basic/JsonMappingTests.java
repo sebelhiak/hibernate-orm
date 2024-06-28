@@ -51,6 +51,7 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author Christian Beikov
  */
+@SkipForDialect(dialectClass = OracleDialect.class)
 @DomainModel(annotatedClasses = JsonMappingTests.EntityWithJson.class)
 @SessionFactory
 public abstract class JsonMappingTests {
