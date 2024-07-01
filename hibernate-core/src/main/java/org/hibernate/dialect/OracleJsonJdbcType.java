@@ -22,7 +22,7 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 	/**
 	 * Singleton access
 	 */
-	public static final OracleJsonJdbcType INSTANCE = new OracleJsonJdbcType( (EmbeddableMappingType) null );
+	public static final OracleJsonJdbcType INSTANCE = new OracleJsonJdbcType( null );
 
 	private OracleJsonJdbcType(EmbeddableMappingType embeddableMappingType) {
 		super( embeddableMappingType );
@@ -37,9 +37,9 @@ public class OracleJsonJdbcType extends OracleJsonBlobJdbcType {
 
 	@Override
 	public AggregateJdbcType resolveAggregateJdbcType(
-		EmbeddableMappingType mappingType,
-		String sqlType,
-		RuntimeModelCreationContext creationContext) {
+			EmbeddableMappingType mappingType,
+			String sqlType,
+			RuntimeModelCreationContext creationContext) {
 		return new OracleJsonJdbcType( mappingType );
 	}
 

@@ -944,7 +944,7 @@ public class OracleDialect extends Dialect {
 		final boolean preferLong = serviceRegistry.requireService( ConfigurationService.class )
 				.getSetting( PREFER_LONG_RAW, StandardConverters.BOOLEAN, false );
 		typeContributions.contributeJdbcType( preferLong ? BlobJdbcType.PRIMITIVE_ARRAY_BINDING : BlobJdbcType.DEFAULT );
-		if ( getVersion().isSameOrAfter( 21 )  && (driverMajorVersion >=24 || (driverMajorVersion >= 23 && driverMinorVersion >= 4)) && OracleJdbcHelper.loadJacksonExtension(serviceRegistry )  ) {
+		if ( getVersion().isSameOrAfter( 21 )  && (driverMajorVersion >=24 || (driverMajorVersion >= 23 && driverMinorVersion >= 5)) && OracleJdbcHelper.loadJacksonExtension(serviceRegistry )  ) {
 			typeContributions.contributeJdbcType( OracleOsonJdbcType.INSTANCE );
 		}
 		else if ( getVersion().isSameOrAfter( 21 )  ) {
